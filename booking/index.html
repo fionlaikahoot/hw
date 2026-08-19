@@ -1,0 +1,384 @@
+﻿<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>平板電腦預約系統</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, "Segoe UI", Roboto, system-ui, sans-serif;
+        background: #eef2ff;
+        color: #0f172a;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #f8fbff 0%, #eef2ff 100%);
+      }
+      #app { padding: 1.5rem; }
+      .app-shell { max-width: 1200px; margin: 0 auto; }
+      .app-container { display: grid; gap: 1rem; background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 55px rgba(15, 23, 42, 0.12); }
+      .page-header { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
+      .eyebrow { margin: 0 0 0.4rem; color: #2563eb; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+      h1 { margin: 0 0 0.4rem; font-size: 1.9rem; }
+      .subtitle { margin: 0; color: #475569; line-height: 1.7; }
+      .date-picker { display: flex; flex-direction: column; gap: 0.35rem; font-weight: 600; color: #334155; }
+      .date-picker input { border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.6rem 0.75rem; }
+      .date-actions { display: flex; justify-content: space-between; gap: 0.45rem; flex-wrap: wrap; align-items: center; }
+      .date-actions .group { display: flex; gap: 0.45rem; }
+      .date-actions button { border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 999px; padding: 0.45rem 0.7rem; cursor: pointer; }
+      .status-bar { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.8rem 1rem; background: #eff6ff; border-radius: 14px; color: #1e3a8a; }
+      .status-bar p { margin: 0; color: #1d4ed8; }
+      .content-grid { display: grid; grid-template-columns: minmax(0, 2fr) 320px; gap: 1rem; align-items: start; }
+      .rooms-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+      .room-card { border: 1px solid #dbeafe; border-radius: 18px; padding: 1rem; background: #f8fbff; }
+      .room-card-header { display: flex; justify-content: space-between; gap: 0.5rem; align-items: flex-start; margin-bottom: 0.75rem; }
+      .room-card-header h2 { margin: 0 0 0.25rem; font-size: 1rem; }
+      .room-card-header p { margin: 0; font-size: 0.9rem; color: #64748b; }
+      .room-card-header span { background: #2563eb; color: white; padding: 0.32rem 0.55rem; border-radius: 999px; font-size: 0.8rem; white-space: nowrap; }
+      .slot-list { display: grid; gap: 0.55rem; }
+      .slot-pill { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0.65rem 0.75rem; background: white; color: #334155; cursor: pointer; }
+      .slot-pill:hover { border-color: #60a5fa; background: #eff6ff; }
+      .slot-pill.booked { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
+      .slot-pill.selected { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+      .slot-pill small { font-size: 0.72rem; }
+      .booking-panel { border: 1px solid #dbeafe; border-radius: 18px; padding: 1rem; background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%); }
+      .booking-panel__header { display: flex; justify-content: space-between; gap: 0.8rem; align-items: center; margin-bottom: 0.8rem; }
+      .booking-panel h3 { margin: 0; font-size: 1rem; }
+      .link-btn, .submit-btn { border: none; border-radius: 999px; padding: 0.6rem 0.9rem; cursor: pointer; }
+      .link-btn { background: transparent; color: #2563eb; font-weight: 700; }
+      .booking-form { display: grid; gap: 0.75rem; }
+      .booking-form label { display: grid; gap: 0.35rem; font-weight: 600; color: #334155; }
+      .booking-form input, .booking-form textarea { border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.7rem 0.8rem; width: 100%; }
+      .submit-btn { background: #2563eb; color: white; }
+      .booking-detail { display: grid; gap: 0.35rem; color: #334155; }
+      .cancel-box { margin-top: 0.7rem; display: grid; gap: 0.5rem; }
+      .cancel-box input { border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.65rem 0.75rem; }
+      .cancel-box button { border: none; border-radius: 999px; padding: 0.6rem 0.9rem; background: #dc2626; color: white; cursor: pointer; }
+      .cancel-hint { font-size: 0.8rem; color: #64748b; margin: 0; }
+      .recurring-password { display: block; }
+      .recurring-password input { border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.6rem 0.75rem; }
+      @media (max-width: 900px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .rooms-grid { grid-template-columns: 1fr; }
+        .date-actions { flex-direction: column; align-items: stretch; }
+        .date-actions .group { width: 100%; display: flex; gap: 0.45rem; }
+        .date-actions .group + .group { margin-top: 0.5rem; }
+        .date-actions .group button { flex: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const rooms = [
+        { id: "A", name: "平板電腦 A", capacity: "30 台", description: "適合個人與小組學習，輕巧好攜、適合短時段借用與現場示範。" },
+        { id: "B", name: "平板電腦 B", capacity: "30 台", description: "為教學與討論場景設計，適合課堂演示、分組協作與多媒體播放。" },
+        { id: "C", name: "平板電腦 C", capacity: "30 台", description: "電量穩定且配件齊全，適合長時間借用、大型教學或研習活動使用。" }
+      ];
+
+      const storageKey = "meeting-room-bookings-html";
+
+      function getAdminPassword() {
+        try {
+          const params = new URLSearchParams(location.search);
+          const param = params.get("adminPassword") || params.get("admin");
+          const stored = localStorage.getItem("adminPassword");
+          return param || stored || "admin";
+        } catch (e) {
+          return "admin";
+        }
+      }
+
+      function formatDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function getTodayDate() {
+        return formatDateKey(new Date());
+      }
+
+      function formatDateLabel(dateValue) {
+        const date = new Date(`${dateValue}T00:00:00`);
+        return date.toLocaleDateString("zh-TW", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "short"
+        });
+      }
+
+      function loadBookings() {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          return saved ? JSON.parse(saved) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveBookings(bookings) {
+        localStorage.setItem(storageKey, JSON.stringify(bookings));
+      }
+
+      function buildTimeSlots() {
+        const slots = [];
+        for (let hour = 9; hour < 18; hour += 1) {
+          const start = `${String(hour).padStart(2, "0")}:00`;
+          const end = `${String(hour + 1).padStart(2, "0")}:00`;
+          slots.push({ id: `${start}-${end}`, time: `${start} - ${end}` });
+        }
+        return slots;
+      }
+
+      function buildRecurringDates(startDate, repeatWeeks) {
+        if (!repeatWeeks || repeatWeeks < 1) {
+          return [startDate];
+        }
+
+        const dates = [];
+        const start = new Date(`${startDate}T00:00:00`);
+        for (let index = 0; index < repeatWeeks; index += 1) {
+          const current = new Date(start);
+          current.setDate(start.getDate() + index * 7);
+          dates.push(formatDateKey(current));
+        }
+        return dates;
+      }
+
+      const state = {
+        selectedDate: getTodayDate(),
+        selectedSlot: null,
+        bookings: loadBookings(),
+        message: "點擊空白時段即可預約。",
+        form: { attendeeName: "", department: "", topic: "", attendeeCount: "", isRecurring: "none", repeatWeeks: "4" }
+      };
+
+      const app = document.getElementById("app");
+
+      function getBooking(roomId, slotId) {
+        return state.bookings.find((booking) =>
+          booking.date === state.selectedDate && booking.roomId === roomId && booking.slotId === slotId
+        );
+      }
+
+      function render() {
+        const bookingCount = state.bookings.filter((booking) => booking.date === state.selectedDate).length;
+        const roomCards = rooms.map((room) => {
+          const slots = buildTimeSlots().map((slot) => {
+            const booking = getBooking(room.id, slot.id);
+            const isBooked = Boolean(booking);
+            const isSelected = state.selectedSlot && state.selectedSlot.roomId === room.id && state.selectedSlot.slotId === slot.id;
+            return `
+              <button
+                type="button"
+                class="slot-pill ${isBooked ? "booked" : "open"} ${isSelected ? "selected" : ""}"
+                data-action="select-slot"
+                data-room-id="${room.id}"
+                data-slot-id="${slot.id}"
+              >
+                <span>${slot.time}</span>
+                <small>${isBooked ? "已預約" : "可預約"}</small>
+              </button>
+            `;
+          }).join("");
+
+          return `
+            <article class="room-card">
+              <div class="room-card-header">
+                <div>
+                  <h2>${room.name}</h2>
+                  <p>${room.description}</p>
+                </div>
+                <span>${room.capacity}</span>
+              </div>
+              <div class="slot-list">${slots}</div>
+            </article>
+          `;
+        }).join("");
+
+        const selectedRoom = state.selectedSlot ? state.selectedSlot.roomId : "";
+        const selectedSlotId = state.selectedSlot ? state.selectedSlot.slotId : "";
+        const activeBooking = state.selectedSlot
+          ? state.bookings.find((booking) =>
+              booking.date === state.selectedDate &&
+              booking.roomId === state.selectedSlot.roomId &&
+              booking.slotId === state.selectedSlot.slotId
+            )
+          : null;
+
+        app.innerHTML = `
+          <div class="app-shell">
+            <main class="app-container">
+              <header class="page-header">
+                <div>
+                  <p class="eyebrow">線上平板電腦預約系統</p>
+                  <h1>選擇日期與時段，快速完成預約</h1>
+                  <p class="subtitle">可根據教學需求預約平板電腦，並查看目前已被登記的時段。</p>
+                </div>
+                <label class="date-picker">
+                  <span>預約日期</span>
+                  <input type="date" id="date-picker" value="${state.selectedDate}" />
+                </label>
+              </header>
+
+              <div class="status-bar">
+                <p>當日已預約 ${bookingCount} 個時段</p>
+                <p>${state.message}</p>
+              </div>
+
+              <div class="content-grid">
+                <section class="rooms-grid">${roomCards}</section>
+                <aside class="booking-panel">
+                  <div class="booking-panel__header">
+                    <h3>${selectedRoom ? `已選擇 ${selectedRoom}` : "選擇時段"}</h3>
+                    ${selectedRoom ? `<button type="button" class="link-btn" data-action="clear-selection">清除</button>` : ""}
+                  </div>
+
+                  ${selectedRoom ? `
+                    <div class="booking-detail">
+                      <strong>時段：${selectedSlotId}</strong>
+                      <span>狀態：${activeBooking ? "已被預約" : "可預約"}</span>
+                    </div>
+                  ` : `<p class="subtitle">點擊任何可預約時段即可開始。</p>`}
+
+                  ${selectedRoom && !activeBooking ? `
+                    <form class="booking-form" id="booking-form">
+                      <label>
+                        借用人
+                        <input type="text" name="attendeeName" value="${state.form.attendeeName}" required />
+                      </label>
+                      <label>
+                        單位/班級
+                        <input type="text" name="department" value="${state.form.department}" required />
+                      </label>
+                      <label>
+                        使用主題
+                        <input type="text" name="topic" value="${state.form.topic}" required />
+                      </label>
+                      <label>
+                        人數
+                        <input type="number" name="attendeeCount" min="1" value="${state.form.attendeeCount}" required />
+                      </label>
+                      <label>
+                        連續預約
+                        <select name="isRecurring">
+                          <option value="none" ${state.form.isRecurring === "none" ? "selected" : ""}>單次</option>
+                          <option value="weekly" ${state.form.isRecurring === "weekly" ? "selected" : ""}>每週</option>
+                        </select>
+                      </label>
+                      ${state.form.isRecurring === "weekly" ? `
+                        <label class="recurring-password">
+                          重複週數
+                          <input type="number" name="repeatWeeks" min="1" max="12" value="${state.form.repeatWeeks}" />
+                        </label>
+                      ` : ""}
+                      <button type="submit" class="submit-btn">確認預約</button>
+                    </form>
+                  ` : ""}
+
+                  ${activeBooking ? `
+                    <div class="cancel-box">
+                      <p class="cancel-hint">如需取消，請輸入管理密碼。</p>
+                      <input type="password" id="cancel-password" placeholder="管理密碼" />
+                      <button type="button" data-action="cancel-booking">取消預約</button>
+                    </div>
+                  ` : ""}
+                </aside>
+              </div>
+            </main>
+          </div>
+        `;
+
+        document.getElementById("date-picker")?.addEventListener("change", (event) => {
+          state.selectedDate = event.target.value;
+          state.selectedSlot = null;
+          render();
+        });
+
+        app.querySelectorAll("[data-action='select-slot']").forEach((button) => {
+          button.addEventListener("click", () => {
+            const roomId = button.getAttribute("data-room-id");
+            const slotId = button.getAttribute("data-slot-id");
+            state.selectedSlot = { roomId, slotId };
+            state.message = "請填寫借用資訊。";
+            render();
+          });
+        });
+
+        app.querySelectorAll("[data-action='clear-selection']").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.selectedSlot = null;
+            state.message = "點擊空白時段即可預約。";
+            render();
+          });
+        });
+
+        const form = app.querySelector("#booking-form");
+        form?.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          const attendeeName = formData.get("attendeeName")?.toString().trim() || "";
+          const department = formData.get("department")?.toString().trim() || "";
+          const topic = formData.get("topic")?.toString().trim() || "";
+          const attendeeCount = formData.get("attendeeCount")?.toString().trim() || "";
+          const isRecurring = formData.get("isRecurring")?.toString() || "none";
+          const repeatWeeks = Number(formData.get("repeatWeeks")?.toString() || 1);
+
+          if (!attendeeName || !department || !topic || !attendeeCount) {
+            state.message = "請完整填寫借用資訊。";
+            render();
+            return;
+          }
+
+          const booking = {
+            id: crypto.randomUUID(),
+            date: state.selectedDate,
+            roomId: state.selectedSlot.roomId,
+            slotId: state.selectedSlot.slotId,
+            attendeeName,
+            department,
+            topic,
+            attendeeCount,
+            isRecurring,
+            repeatWeeks,
+            createdAt: new Date().toISOString()
+          };
+
+          const dates = isRecurring === "weekly" ? buildRecurringDates(state.selectedDate, repeatWeeks) : [state.selectedDate];
+          dates.forEach((date) => {
+            state.bookings.push({ ...booking, date, id: `${booking.id}-${date}` });
+          });
+          saveBookings(state.bookings);
+          state.selectedSlot = null;
+          state.message = "預約已建立。";
+          render();
+        });
+
+        app.querySelector("[data-action='cancel-booking']")?.addEventListener("click", () => {
+          const input = app.querySelector("#cancel-password");
+          const password = input?.value || "";
+          const adminPassword = getAdminPassword();
+          if (password !== adminPassword) {
+            state.message = "管理密碼錯誤。";
+            render();
+            return;
+          }
+
+          state.bookings = state.bookings.filter((booking) => !(booking.date === state.selectedDate && booking.roomId === state.selectedSlot.roomId && booking.slotId === state.selectedSlot.slotId));
+          saveBookings(state.bookings);
+          state.selectedSlot = null;
+          state.message = "預約已取消。";
+          render();
+        });
+      }
+
+      render();
+    </script>
+  </body>
+</html>
