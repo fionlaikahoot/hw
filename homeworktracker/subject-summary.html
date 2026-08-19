@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>科目欠功課一覽</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">科目欠功課一覽</p>
+          <h1>每個科目有哪些學生未交</h1>
+          <p class="subtitle">按科目查看還欠功課的學生，便於分科追收。</p>
+        </div>
+        <div class="page-actions">
+          <a class="page-link" href="index.html">回功課追收</a>
+        </div>
+      </header>
+
+      <main class="panel">
+        <div class="panel-head">
+          <h2>科目未交清單</h2>
+        </div>
+        <div id="subjectHomeworkList" class="student-homework-list"></div>
+      </main>
+    </div>
+
+    <script src="subject-summary.js"></script>
+  </body>
+</html>

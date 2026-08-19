@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>學號姓名管理</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">學號對照表</p>
+          <h1>按學號輸入名字</h1>
+          <p class="subtitle">支援 1 到 35 號，輸入後會自動儲存，方便之後快速查詢。</p>
+        </div>
+        <div class="page-actions">
+          <a class="page-link" href="index.html">回功課追收</a>
+        </div>
+      </header>
+
+      <main class="panel students-panel">
+        <div class="panel-head">
+          <h2>學號姓名清單</h2>
+          <button type="button" id="clearBtn" class="secondary-action muted-action">清空全部</button>
+        </div>
+        <p class="helper-text">每個學號一列，直接輸入名字即可。</p>
+        <div id="statusMessage" class="status-message">已準備好，可以開始輸入。</div>
+        <div id="studentList" class="student-grid"></div>
+      </main>
+    </div>
+
+    <script src="students.js"></script>
+  </body>
+</html>

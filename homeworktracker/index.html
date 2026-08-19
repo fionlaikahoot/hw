@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>功課追收系統</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">快速追收功課</p>
+          <h1>交齊功課的系統</h1>
+          <p class="subtitle">看見每位學生還欠什麼，輸入一次就能快速追收。</p>
+        </div>
+        <div class="page-actions">
+          <a class="page-link" href="students.html">學號姓名輸入</a>
+          <a class="page-link" href="student-summary.html">學生欠功課</a>
+          <a class="page-link" href="subject-summary.html">科目欠功課</a>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="panel form-panel">
+          <h2>新增功課</h2>
+          <form id="homeworkForm" class="homework-form">
+            <label>
+              學生學號（可一次輸入多個）
+              <input id="studentIds" name="studentIds" type="text" placeholder="例：1, 2, 3" />
+            </label>
+            <small class="hint">可用逗號、空白或換行分隔；例如 1 2 3。若學號對照表已填，會自動顯示「學號＋名字」。</small>
+            <label>
+              學生姓名（選填）
+              <input id="studentName" name="studentName" type="text" placeholder="例：小美" />
+            </label>
+            <label>
+              功課內容
+              <input id="homeworkTitle" name="homeworkTitle" type="text" placeholder="例：數學第 5 頁" required />
+            </label>
+            <label>
+              科目
+              <select id="subjectSelect" name="subjectSelect">
+                <option value="">-- 請選擇科目 --</option>
+                <option value="中文">中文</option>
+                <option value="英文">英文</option>
+                <option value="數學">數學</option>
+                <option value="常識">常識</option>
+                <option value="科學">科學</option>
+                <option value="人文">人文</option>
+                <option value="電腦">電腦</option>
+                <option value="音樂">音樂</option>
+                <option value="視藝">視藝</option>
+                <option value="體育">體育</option>
+                <option value="宗教與道德">宗教與道德</option>
+                <option value="普通話">普通話</option>
+                <option value="其他">其他</option>
+              </select>
+              <input id="subject" name="subject" type="text" placeholder="如需自定義，可直接輸入科目" />
+            </label>
+            <small class="hint">可選擇預設科目，或直接手打你想用的名稱。</small>
+            <label>
+              交件日期
+              <input id="dueDate" name="dueDate" type="date" />
+            </label>
+            <button type="submit">新增功課</button>
+          </form>
+        </section>
+
+        <section class="panel summary-panel">
+          <div class="panel-head">
+            <h2>追收狀況</h2>
+            <div class="panel-actions">
+              <button type="button" id="markAllDoneBtn" class="secondary-action">全部已收</button>
+              <button type="button" id="clearCompletedBtn" class="secondary-action muted-action">清空已收</button>
+            </div>
+          </div>
+          <label class="search-box">
+            <span>搜尋學生 / 功課</span>
+            <input id="searchInput" type="text" placeholder="例如：小美 或 數學" />
+          </label>
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-label">尚未交</span>
+              <strong id="pendingCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">已收</span>
+              <strong id="completedCount">0</strong>
+            </div>
+          </div>
+          <div class="summary-section">
+            <h3>各學生待交數量</h3>
+            <div id="studentSummary" class="student-summary"></div>
+          </div>
+          <div class="list-section">
+            <h3>還沒交的功課</h3>
+            <div id="pendingList" class="item-list"></div>
+          </div>
+          <div class="list-section">
+            <h3>已收的功課</h3>
+            <div id="completedList" class="item-list completed-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
